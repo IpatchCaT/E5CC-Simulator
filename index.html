@@ -420,7 +420,15 @@
     if (e.key === "ArrowUp") { e.preventDefault(); stepCurrent(1, menuIdx === 0 ? 10 : 1); }
     if (e.key === "ArrowDown") { e.preventDefault(); stepCurrent(-1, menuIdx === 0 ? 10 : 1); }
   });
-  $("btnSetSv").onclick = function () { var v = parseFloat($("svInput").value); if (isNaN(v)) { banner("Enter a valid SV.", "err"); return; } setSV(v, "panel"); };
+  $("btnSetSv").onclick = function () {
+    var btn = this, v = parseFloat($("svInput").value);
+    if (isNaN(v)) { banner("Enter a valid SV.", "err"); return; }
+    var c = clamp(Math.round(v * 10) / 10, 0, 300);
+    menuIdx = 0;
+    if (c === S.sv) { $("svInput").value = c; refreshDisplays(); banner("SV is already " + c + " \u00b0C.", "info", 2500); }
+    else { setSV(c, "panel"); banner("SV set to " + c + " \u00b0C" + (c !== v ? " (limited to 0-300 \u00b0C)" : ""), "ok", 3000); }
+    btn.textContent = "\u2713 Set"; setTimeout(function () { btn.textContent = "Set SV"; }, 1200);
+  };
   $("svInput").addEventListener("keydown", function (e) { if (e.key === "Enter") $("btnSetSv").click(); });
   $("btnSvUp").onclick = function () { setSV(S.sv + 10, "panel"); };
   $("btnSvDown").onclick = function () { setSV(S.sv - 10, "panel"); };
