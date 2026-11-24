@@ -1,1 +1,987 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>MAWEA | E5CC Test Dashboard</title>
+<style>
+:root{color-scheme:light;--ink:#202625;--paper:#eeece6;--panel:#faf9f5;--rule:#b9bbb5;--dark:#252a2b;--field:#393f40;--white:#faf9f3;--blue:#075985;--amber:#8b5300;--green:#17613d;--violet:#543990;--red:#942e25;--yellow:#f4b629;font:16px "Segoe UI",system-ui,sans-serif}
+*{box-sizing:border-box}body{margin:0;color:var(--ink);background:var(--paper)}h1,h2,h3,p{margin:0}h2{font-size:1.07rem;text-transform:uppercase;letter-spacing:.045em}button,input,select,textarea{font:inherit}button,select,input,textarea{border:1px solid var(--rule);border-radius:3px;min-height:2.4rem}button{cursor:pointer;padding:.45rem .7rem;font-weight:700;background:var(--panel);color:var(--ink);transition:background .14s,border-color .14s}button:hover:not(:disabled){background:#dadfda}button:active:not(:disabled){transform:translateY(1px)}button:disabled,fieldset:disabled{opacity:.62;cursor:default}a{color:inherit}:focus-visible{outline:3px solid #2588bd;outline-offset:2px}.primary{background:var(--yellow);border-color:#b47900;color:#24241b}.primary:hover:not(:disabled){background:#ffcc56}
+header{display:flex;align-items:center;justify-content:space-between;gap:1rem;padding:.72rem 1rem;background:#242829;color:var(--white);border-bottom:3px solid #737874}h1{display:flex;gap:.75rem;align-items:center;font-size:clamp(1rem,2.2vw,1.65rem);letter-spacing:.035em;text-transform:uppercase}h1 b{padding-right:.75rem;border-right:1px solid #939892;font-size:1.22em}.modes{display:flex;gap:2px;border:1px solid #757a78;padding:2px;border-radius:4px}.modes button{background:transparent;border-color:transparent;color:var(--white);min-height:2rem;white-space:nowrap}.modes button:hover:not(:disabled){background:#464e4b}.modes button[aria-pressed=true]{background:#215c42;color:white}
+.layout{display:grid;grid-template-columns:minmax(260px,24%) minmax(0,1fr);max-width:1800px;margin:auto;gap:.65rem;padding:.65rem}.sidebar{background:var(--dark);color:var(--white);padding:.75rem;min-width:0}.sidebar .section{padding:.65rem 0;border-bottom:1px solid #626966}.sidebar .section:first-child{padding-top:0}.sidebar .section:last-child{border:0}.sidebar h2{margin-bottom:.6rem}.sidebar button:not(.primary){background:var(--field);color:white;border-color:#8c9291}.sidebar button:hover:not(:disabled):not(.primary){background:#505858}.sidebar a{color:#c5e9f6}.fields{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:.5rem .6rem}fieldset{margin:0;padding:0;border:0;min-width:0}.full{grid-column:1/-1}label,.label{display:grid;gap:.22rem;font-weight:650;font-size:.85rem}input,select,textarea{width:100%;min-width:0;background:#fff;color:var(--ink);padding:.3rem .43rem}textarea{resize:vertical}.control-row{display:flex;gap:.4rem;align-items:center;flex-wrap:wrap}.control-row>*{flex:1 1 auto}.port-row{display:flex;gap:.35rem;align-items:center;margin:.25rem 0 .55rem}.port-row button{white-space:nowrap}.port-name{flex:1;min-width:0;overflow-wrap:anywhere;padding:.48rem .45rem;background:var(--field);border:1px solid #787e7a;border-radius:3px;font-size:.82rem}.small{font-size:.81rem;line-height:1.42}.sidebar .small{color:#e0e3df}.sidebar output{display:block;min-height:2.4em;margin-top:.4rem}.section .control-row{margin-top:.5rem}
+dl{margin:.3rem 0}dl div{display:flex;justify-content:space-between;gap:.5rem;padding:.26rem .13rem;border-bottom:1px solid #5c6460;font-size:.84rem}dd{margin:0;font-variant-numeric:tabular-nums}summary{cursor:pointer;font-size:.86rem;font-weight:700;padding:.4rem 0}code{font-family:Consolas,"Liberation Mono",monospace}pre{white-space:pre-wrap;overflow-wrap:anywhere;margin:.3rem 0;color:#e2e9e4;font-size:.78rem}
+.workspace{display:grid;align-content:start;gap:.52rem;min-width:0}.cards{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:.5rem}.kpi{min-width:0;min-height:6.1rem;border:1px solid var(--rule);border-top:4px solid var(--signal);background:var(--tint);padding:.52rem .65rem}.kpi h2{font-size:.81rem}.kpi strong{display:block;color:var(--signal);font:700 clamp(1.16rem,2.65vw,2.8rem)/1.15 Consolas,"Liberation Mono",monospace;margin:.23rem 0;white-space:nowrap}.kpi small{display:block;font-size:.72rem;font-weight:700;min-height:1em}.pv{--signal:var(--blue);--tint:#e4edf1}.sp{--signal:var(--amber);--tint:#f4ead9}.mv{--signal:var(--violet);--tint:#ede8f2}.err{--signal:var(--green);--tint:#e5eee2}.outside{--signal:var(--amber);--tint:#fff0d3}.unavailable{--signal:#525955;--tint:#e9e9e4}
+.panel,.status{background:var(--panel);border:1px solid var(--rule)}.panel{padding:.55rem .7rem}.status{display:flex;flex-wrap:wrap;gap:.35rem 1rem;padding:.52rem .65rem;font-size:.84rem;font-weight:650}.status .pill{margin-left:auto}.pill{display:inline-flex;gap:.3rem;align-items:center}.pill::before{content:"";width:.52rem;height:.52rem;border-radius:50%;background:currentColor}.ok{color:var(--green)}.warn{color:var(--amber)}.danger{color:var(--red)}
+.chart-head{display:flex;align-items:center;justify-content:space-between;gap:.25rem .6rem;flex-wrap:wrap}.legend{display:flex;gap:.7rem;flex-wrap:wrap;font-size:.78rem;font-weight:700}.legend i{display:inline-block;width:1.1rem;margin-right:.25rem;vertical-align:middle;border-top:3px solid var(--blue)}.legend .sp-line{border-top:3px dashed #a56500}.legend .band{border-top:7px solid #d7dfcc}.legend .mv-line{border-color:var(--violet)}.plot{display:block;width:100%;overflow:visible;touch-action:pan-y}.chart-foot{display:flex;gap:.7rem;align-items:center;flex-wrap:wrap;margin-top:.1rem}.chart-foot label{display:flex;align-items:center}.chart-foot input{width:5.6rem;min-height:2rem}.chart-foot output{font-variant-numeric:tabular-nums}.history-tools{display:flex;flex-wrap:wrap;gap:.42rem;align-items:center}.session-head{display:flex;flex-wrap:wrap;justify-content:space-between;gap:.4rem;align-items:center}.session-info,.metrics-controls{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:.4rem;margin:.55rem 0}.metrics{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:1px;background:var(--rule);border:1px solid var(--rule);margin-top:.5rem}.metric{background:var(--panel);padding:.38rem .45rem;min-width:0}.metric b{display:block;font:700 .96rem Consolas,monospace;margin-top:.18rem}.metric span{font-size:.76rem}.note-line{margin:.28rem 0;font-size:.83rem;overflow-wrap:anywhere}#notes{max-height:12rem;overflow:auto}.sample-status{min-height:1.2em;margin-top:.35rem}.recording{color:var(--red);font-weight:750;font-variant-numeric:tabular-nums}.report-title{display:none}[hidden]{display:none!important}
+@media(max-width:970px){.layout{grid-template-columns:245px minmax(0,1fr)}.cards,.metrics{grid-template-columns:repeat(2,minmax(0,1fr))}header{flex-wrap:wrap}.status .pill{margin-left:0}}
+@media(max-width:670px){.layout{display:flex;flex-direction:column}.sidebar{order:2}.workspace{order:1}.session-info,.metrics-controls{grid-template-columns:repeat(2,minmax(0,1fr))}.kpi strong{font-size:clamp(1rem,5.5vw,2rem)}}
+@media(prefers-reduced-motion:reduce){*,*::before,*::after{transition:none!important;animation:none!important}}
+@media print{@page{margin:10mm}body,.layout,.workspace{display:block;background:white}.sidebar,header,.no-print,button,.session-info,.metrics-controls,.cards,.status{display:none!important}.report-title{display:block;margin-bottom:.5rem;white-space:pre-line}.panel,.cards,.status{break-inside:avoid;margin-bottom:.5rem}.plot{max-height:240px}.cards{grid-template-columns:repeat(4,minmax(0,1fr))}.metrics{grid-template-columns:repeat(4,minmax(0,1fr))}#notes{max-height:none;overflow:visible}}
+</style>
+</head>
+<body>
+<header>
+  <h1><b>MAWEA</b> E5CC Test Dashboard</h1>
+  <nav class="modes" aria-label="Data source"><button id="simMode" aria-pressed="true">Simulator</button><button id="liveMode" aria-pressed="false">Live Serial</button></nav>
+</header>
+<div class="layout">
+<aside class="sidebar" aria-label="Setup and diagnostics">
+  <section class="section">
+    <h2>Serial connection</h2>
+    <div class="label">USB RS‑485 port</div>
+    <div class="port-row"><span class="port-name" id="portName">No port selected</span><button id="choose">Choose port</button></div>
+    <fieldset id="serialFields" class="fields" aria-label="Serial settings">
+      <label class="full">Protocol<select id="protocol"><option value="rtu">Modbus RTU · read-only</option><option value="compoway">CompoWay/F · unsupported</option></select></label>
+      <label>Station address<input id="station" type="number" min="1" max="99" value="1" step="1" required></label>
+      <label>Baud rate<select id="baud"><option>9600</option><option selected>19200</option><option>38400</option><option>57600</option></select></label>
+      <label>Data bits<select id="dataBits"><option>8</option></select></label>
+      <label>Parity<select id="parity"><option value="even">Even</option><option value="odd">Odd</option><option value="none">None</option></select></label>
+      <label>Stop bits<select id="stopBits"><option>1</option><option>2</option></select></label>
+      <label>Poll interval (ms)<input id="poll" type="number" min="250" max="60000" value="1000" step="1" required></label>
+      <label>Timeout (ms)<input id="timeout" type="number" min="100" max="30000" value="500" step="1" required></label>
+    </fieldset>
+    <div class="control-row"><button id="connect" class="primary">Connect</button><button id="readOnce">Read PV once</button></div>
+    <output id="serialMessage" class="small" aria-live="polite">Select Live Serial to use these controls.</output>
+  </section>
+  <section id="simPanel" class="section">
+    <h2>Simulation</h2>
+    <label>Scenario<select id="scenario"><option value="warm">Warm-up and settle</option><option value="overshoot">Heat-up with overshoot</option><option value="stable">Steady operation</option><option value="load">Load disturbance</option><option value="alarm">Temperature alarm</option><option value="drop">Communication dropout and recovery</option></select></label>
+    <div class="control-row"><button id="restart">Restart scenario</button></div>
+    <output id="simMessage" class="small"></output>
+  </section>
+  <section class="section">
+    <h2>Diagnostics</h2>
+    <dl><div><dt>Last response</dt><dd id="latency">—</dd></div><div><dt>Successful reads</dt><dd id="reads">0</dd></div><div><dt>Timeouts</dt><dd id="timeouts">0</dd></div><div><dt>CRC errors</dt><dd id="crcErrors">0</dd></div><div><dt>Modbus exceptions</dt><dd id="exceptions">0</dd></div></dl>
+    <details><summary>Latest serial frames (hex)</summary><pre id="frames">Available in Live Serial mode.</pre></details>
+    <details><summary>Bench setup and register map</summary>
+      <p class="small">Use a Windows-recognized USB-to-RS‑485 adapter in Edge or Chrome. Match the controller's serial settings. Start on a standalone bench connection if a PLC or HMI already polls the controller.</p>
+      <p class="small">H175 §4‑4‑1 and §5. Function 03, zero-based hexadecimal addresses, big-endian two-register values. PV 0000 and internal SP 0004 use signed values and decimal monitor 0420. Status 0002 uses the full bit field. Heating MV 0008 uses signed tenths of a percent. Temperature input type 0C00 and units 0C02 determine whether °C or °F applies.</p>
+      <a class="small" href="https://www.omron-ap.com.my/data_pdf/mnu/h175-e1-17_e5_c.pdf?id=3101" target="_blank" rel="noopener">Omron H175 communications manual</a>
+    </details>
+  </section>
+</aside>
+<main class="workspace">
+  <div class="report-title" id="reportTitle"></div>
+  <section class="cards" aria-label="Temperature readings">
+    <article id="pvCard" class="kpi pv"><h2>Process value (PV)</h2><strong id="pv">—</strong><small id="pvHint">Unavailable</small></article>
+    <article id="spCard" class="kpi sp"><h2>Setpoint (SP)</h2><strong id="sp">—</strong><small id="spHint">Unavailable</small></article>
+    <article id="errCard" class="kpi err"><h2>Error (PV − SP)</h2><strong id="error">—</strong><small id="errorHint">Unavailable</small></article>
+    <article id="mvCard" class="kpi mv"><h2>Heating output (MV)</h2><strong id="mv">—</strong><small id="mvHint">Unavailable</small></article>
+  </section>
+  <div class="status"><span>Alarm <b id="alarm">Unavailable</b></span><span>Controller <b id="run">Unavailable</b></span><span>Last reading <b id="lastRead">—</b></span><span class="pill" id="connectionStatus" role="status">Starting simulator</span></div>
+  <section class="panel">
+    <div class="chart-head"><h2>Temperature trend</h2><div class="legend"><span><i></i>PV</span><span><i class="sp-line"></i>SP</span><span><i class="band"></i>Tolerance</span></div></div>
+    <svg class="plot" id="temperature" role="img" aria-label="Temperature trend chart" tabindex="0"></svg>
+    <div class="chart-foot"><label>Tolerance ± <input id="tolerance" type="number" min=".01" max="9999" step="any" value="2"><span id="bandUnit">°C</span></label><output id="inspection" class="small">Hover or use arrow keys on a chart to inspect a sample.</output></div>
+  </section>
+  <section class="panel"><div class="chart-head"><h2>Heating output</h2><div class="legend"><span><i class="mv-line"></i>MV (%)</span></div></div><svg class="plot" id="outputTrend" role="img" aria-label="Heating output trend chart" tabindex="0"></svg></section>
+  <section class="panel">
+    <div class="session-head"><h2>Test session</h2><div class="history-tools no-print"><button id="record" class="primary">Start recording</button><button id="mark">Mark test start</button><button id="noteButton">Add note</button><button id="export">Export CSV</button><button id="print">Print summary</button></div></div>
+    <p class="sample-status small" id="sessionStatus">Ready to record</p>
+    <div class="session-info">
+      <label>Equipment ID<input id="equipment" maxlength="100"></label>
+      <label>Test name<input id="testName" maxlength="120"></label>
+      <label>Test conditions<input id="conditions" maxlength="300"></label>
+    </div>
+    <form id="noteForm" class="no-print" hidden><label>Note<input id="noteText" required maxlength="300"></label><div class="control-row"><button type="submit">Save note</button><button type="button" id="cancelNote">Cancel</button></div></form>
+    <details id="noteDetails" open hidden><summary>Session notes</summary><div id="notes"></div></details>
+    <div class="metrics-controls">
+      <label>Constant-setpoint segment<select id="segment"><option value="0">Latest segment</option></select></label>
+      <label>Settling dwell (s)<input id="dwell" type="number" min="1" max="86400" value="10" step="1"></label>
+      <label>Steady-state window (last s)<input id="steady" type="number" min="1" max="86400" value="30" step="1"></label>
+    </div>
+    <div class="metrics" id="metrics" aria-label="Test results"></div>
+    <p id="metricsContext" class="sample-status small">Record a test to calculate results.</p>
+    <p id="actionMessage" class="small no-print" role="status"></p>
+  </section>
+</main>
+</div>
+<script>
+"use strict";
+const $ = id => document.getElementById(id);
+const text = (id, value) => { if ($(id).textContent !== String(value)) $(id).textContent = value; };
+const clock = t => new Date(t).toLocaleTimeString([], {hour12:false});
+const number = id => $(id).valueAsNumber;
+const valid = Number.isFinite;
+const clamp = (v, lo, hi) => Math.max(lo, Math.min(hi, v));
+const delay = ms => new Promise(resolve => setTimeout(resolve, ms));
+const hex = bytes => Array.from(bytes, v => v.toString(16).padStart(2, "0").toUpperCase()).join(" ");
+const ATTACHED = ["serialFields", "choose", "connect", "readOnce"];
+const HISTORY_MS = 600000;
+const RECORD_LIMIT = 100000;
+let mode = "sim", selectedPort = null, serial = null, changing = false;
+let state = "Starting simulator", stateTone = "", stale = false, latest = null, lastGood = null;
+let history = [], sim = null, inspectionTime = null, charts = {};
+let active = false, recording = null, diagnostics = newDiagnostics();
 
+function newDiagnostics() {
+  return {reads:0, timeouts:0, crc:0, exceptions:0, latency:null, tx:"—", rx:"—"};
+}
+
+function crc16(bytes) {
+  let crc = 0xffff;
+  for (const byte of bytes) {
+    crc ^= byte;
+    for (let i = 0; i < 8; i++) crc = (crc >>> 1) ^ ((crc & 1) ? 0xa001 : 0);
+  }
+  return crc;
+}
+
+function makeRead(address, register, count) {
+  const frame = Uint8Array.of(address, 3, register >> 8, register & 255, count >> 8, count & 255, 0, 0);
+  const crc = crc16(frame.subarray(0, 6));
+  frame[6] = crc & 255;
+  frame[7] = crc >> 8;
+  return frame;
+}
+
+class RtuReply {
+  constructor(address, count, tx) {
+    this.address = address;
+    this.count = count;
+    this.tx = tx;
+    this.bytes = [];
+    this.badCrc = 0;
+    this.lastFrame = null;
+  }
+  push(chunk) {
+    this.bytes.push(...chunk);
+    while (this.bytes.length >= 3) {
+      const b = this.bytes;
+      if (b[0] !== this.address || (b[1] !== 3 && b[1] !== 0x83)) {
+        b.shift();
+        continue;
+      }
+      const isEcho = this.tx && b.slice(0, 8).every((v, i) => v === this.tx[i]);
+      if (isEcho && b.length < 8) return null;
+      if (isEcho) {
+        b.splice(0, 8);
+        continue;
+      }
+      const exception = b[1] === 0x83;
+      if (!exception && b[2] !== this.count * 2) {
+        b.shift();
+        continue;
+      }
+      const length = exception ? 5 : 5 + this.count * 2;
+      if (b.length < length) return null;
+      const frame = Uint8Array.from(b.slice(0, length));
+      this.lastFrame = frame;
+      const crc = crc16(frame.subarray(0, length - 2));
+      if (crc === (frame[length - 2] | (frame[length - 1] << 8))) return frame;
+      this.badCrc++;
+      b.shift();
+    }
+    return null;
+  }
+}
+
+function signed(bytes, offset) {
+  return new DataView(bytes.buffer, bytes.byteOffset, bytes.byteLength).getInt32(offset, false);
+}
+
+function serialSettings() {
+  if ($("protocol").value !== "rtu") throw new Error("Select Modbus RTU on the controller and in the dashboard. CompoWay/F is unsupported.");
+  for (const id of ["station", "poll", "timeout"]) {
+    if (!$(id).reportValidity()) throw new Error("Check the serial settings.");
+  }
+  return {
+    address:number("station"), interval:number("poll"), timeout:number("timeout"),
+    port:{baudRate:+$("baud").value, dataBits:+$("dataBits").value, parity:$("parity").value,
+      stopBits:+$("stopBits").value, flowControl:"none"}
+  };
+}
+
+function portDescription(port) {
+  const {usbVendorId, usbProductId} = port.getInfo();
+  if (usbVendorId === undefined || usbProductId === undefined) return "Serial port selected";
+  const tag = id => id.toString(16).padStart(4, "0").toUpperCase();
+  return `USB ${tag(usbVendorId)}:${tag(usbProductId)}`;
+}
+
+function explainSerial(error, fallback) {
+  if (error.name === "SecurityError" || error.name === "NotAllowedError") return "Serial access denied. Check browser permissions and company policy.";
+  if (error.name === "NotFoundError") return "No serial port selected. Check that Windows recognizes the USB-to-RS‑485 adapter.";
+  return error.message ? `${fallback} ${error.message}` : fallback;
+}
+
+async function choosePort() {
+  if (!navigator.serial) {
+    text("serialMessage", "Web Serial is unavailable. Open the HTTPS dashboard in desktop Edge or Chrome.");
+    return;
+  }
+  try {
+    selectedPort = await navigator.serial.requestPort();
+    if (mode !== "live") selectedPort = null;
+    else text("serialMessage", "Port selected. Match the E5CC settings before opening it.");
+  } catch (error) {
+    text("serialMessage", explainSerial(error, "Unable to select port."));
+  }
+  updateControls();
+}
+
+class SerialReader {
+  constructor(port, settings) {
+    this.port = port;
+    this.settings = settings;
+    this.closed = false;
+    this.pending = null;
+    this.quietUntil = 0;
+    this.lastByte = 0;
+  }
+  async open() {
+    await this.port.open(this.settings.port);
+    this.reader = this.port.readable.getReader();
+    this.writer = this.port.writable.getWriter();
+    this.readTask = this.listen();
+  }
+  async listen() {
+    try {
+      while (!this.closed) {
+        const {value, done} = await this.reader.read();
+        if (done) break;
+        this.lastByte = performance.now();
+        const request = this.pending;
+        if (!request || !value) continue;
+        const frame = request.parser.push(value);
+        if (frame) request.finish(null, frame);
+      }
+    } catch (error) {
+      if (this.pending) this.pending.finish(error);
+    } finally {
+      if (!this.closed && serial === this) void handlePortLost(this);
+    }
+  }
+  async read(register, count) {
+    // Wait for turnaround and discard late bytes after an unsuccessful poll.
+    const quiet = Math.max(5, 38500 / this.settings.port.baudRate);
+    while (!this.closed) {
+      const wait = Math.max(this.quietUntil, this.lastByte + quiet) - performance.now();
+      if (wait <= 0) break;
+      await delay(wait);
+    }
+    if (this.closed || this.pending) throw new Error("Serial reader is busy or closed.");
+
+    const tx = makeRead(this.settings.address, register, count);
+    diagnostics.tx = hex(tx);
+    diagnostics.rx = "—";
+    const start = performance.now();
+    return new Promise((resolve, reject) => {
+      const parser = new RtuReply(this.settings.address, count, tx);
+      const finish = (error, frame) => {
+        if (this.pending !== request) return;
+        this.pending = null;
+        clearTimeout(timer);
+        diagnostics.crc += parser.badCrc;
+        if (frame || parser.lastFrame) diagnostics.rx = hex(frame || parser.lastFrame);
+        if (error) {
+          reject(error);
+          return;
+        }
+        diagnostics.latency = Math.round(performance.now() - start);
+        if (frame[1] === 0x83) {
+          diagnostics.exceptions++;
+          reject(new Error(`Modbus exception 0x${frame[2].toString(16).padStart(2,"0")} at 0x${register.toString(16).padStart(4,"0")}.`));
+          return;
+        }
+        diagnostics.reads++;
+        resolve(frame.subarray(3, frame.length - 2));
+      };
+      const request = {parser, finish};
+      this.pending = request;
+      const timer = setTimeout(() => {
+        diagnostics.timeouts++;
+        this.quietUntil = performance.now() + this.settings.timeout;
+        finish(new Error(parser.badCrc ? "No valid reply after a CRC error." : "No response before timeout."));
+      }, this.settings.timeout);
+      this.writer.write(tx).catch(error => finish(error));
+    });
+  }
+  async close() {
+    if (this.closed) return;
+    this.closed = true;
+    this.pending?.finish(new Error("Port closed."));
+    await this.reader?.cancel().catch(() => {});
+    await this.writer?.abort().catch(() => {});
+    await this.readTask;
+    this.reader?.releaseLock();
+    this.writer?.releaseLock();
+    if (this.port.readable || this.port.writable) await this.port.close();
+  }
+  async measure(pvOnly) {
+    const data = await this.read(0, pvOnly ? 4 : 10);
+    if (!this.format) {
+      const setup = await this.read(0x0c00, 4);
+      const decimal = signed(await this.read(0x0420, 2), 0);
+      const inputType = signed(setup, 0), tempUnits = signed(setup, 4);
+      if (decimal < 0 || decimal > 3 || inputType < 0 || inputType > 30 || (inputType < 25 && tempUnits !== 0 && tempUnits !== 1)) {
+        throw new Error("Controller returned an unsupported measurement format.");
+      }
+      this.format = {decimal, unit:inputType >= 25 ? "EU" : tempUnits === 0 ? "°C" : "°F"};
+    }
+    const {decimal, unit} = this.format;
+    const status = signed(data, 4);
+    const bit = i => (status >>> i) & 1;
+    const issues = [[0,"Heater overcurrent 1"],[2,"ADC error"],[3,"Heater short 1"],[4,"Remote SP input error"],[6,"Sensor input error"],[7,"Potentiometer input error"],[10,"Heater burnout 1"],[11,"Heater burnout 2"],[12,"Alarm 1"],[13,"Alarm 2"],[14,"Alarm 3"],[28,"Heater overcurrent 2"],[31,"Heater short 2"]].filter(([i]) => bit(i)).map(([, label]) => label);
+    return {
+      time:Date.now(), quality:bit(6) || bit(2) ? "Input error" : "Valid", decimal, unit,
+      pv:bit(6) || bit(2) ? null : signed(data, 0) / 10 ** decimal,
+      sp:pvOnly ? null : signed(data, 8) / 10 ** decimal,
+      mv:pvOnly ? null : signed(data, 16) / 10,
+      alarm:issues.join(", ") || "Normal", run:bit(22) ? "Setup" : bit(24) ? "Stop" : "Run"
+    };
+  }
+}
+
+async function closeSerial() {
+  const device = serial;
+  serial = null;
+  if (device) {
+    try {
+      await device.close();
+    } catch (error) {
+      text("serialMessage", explainSerial(error, "Unable to close port."));
+    }
+  }
+}
+
+async function handlePortLost(device) {
+  if (serial !== device) return;
+  selectedPort = null;
+  setState("Port disconnected", "danger");
+  missSample("Port disconnected");
+  text("serialMessage", "Adapter disconnected. Reconnect it and choose the port again.");
+  await closeSerial();
+  updateControls();
+}
+
+async function openSerial(once) {
+  if (changing) return;
+  if (serial) {
+    if (!once) {
+      changing = true;
+      updateControls();
+      await closeSerial();
+      setState("Disconnected");
+      missSample("Disconnected");
+      text("serialMessage", "Port closed.");
+      changing = false;
+      updateControls();
+    }
+    return;
+  }
+  if (!selectedPort) return;
+  let settings;
+  try {
+    settings = serialSettings();
+  } catch (error) {
+    text("serialMessage", error.message);
+    return;
+  }
+
+  changing = true;
+  updateControls();
+  diagnostics = newDiagnostics();
+  const device = new SerialReader(selectedPort, settings);
+  serial = device;
+  try {
+    await device.open();
+    setState("Port open · awaiting E5CC", "warn");
+    text("serialMessage", "Port open. Waiting for a valid E5CC reply.");
+    if (once) {
+      const sample = await device.measure(true);
+      if (serial !== device) return;
+      acceptSample(sample);
+      setState("PV check complete", "ok");
+      text("serialMessage", valid(sample.pv)
+        ? `PV ${sample.pv.toFixed(sample.decimal)} ${sample.unit}. Compare with the E5CC display. Port closed after test.`
+        : "The E5CC replied with an input error. Check the controller display.");
+    } else {
+      void pollLive(device);
+    }
+  } catch (error) {
+    if (serial === device) {
+      missSample("Communication error");
+      setState("Read failed", "danger");
+      text("serialMessage", explainSerial(error, "Serial test failed."));
+      await closeSerial();
+    }
+  } finally {
+    if (once && serial === device) await closeSerial();
+    changing = false;
+    updateControls();
+  }
+}
+
+async function pollLive(device) {
+  while (serial === device && !device.closed) {
+    const start = performance.now();
+    try {
+      const sample = await device.measure(false);
+      if (serial !== device) break;
+      acceptSample(sample);
+      setState("Receiving valid replies", "ok");
+      text("serialMessage", "Live Modbus RTU · read-only");
+    } catch (error) {
+      if (serial !== device) break;
+      missSample("Communication error");
+      setState("Communication lost", "danger");
+      text("serialMessage", error.message);
+    }
+    render();
+    await delay(Math.max(0, device.settings.interval - (performance.now() - start)));
+  }
+}
+
+function setState(status, tone = "") {
+  state = status;
+  stateTone = tone;
+}
+
+function acceptSample(sample) {
+  const previous = history.at(-1);
+  const interval = mode === "sim" ? 1000 : serial?.settings.interval || 1000;
+  if (previous?.quality === "Valid" && sample.time - previous.time > interval * 2.5) {
+    missSample("Sampling gap", previous.time + interval);
+  }
+  stale = false;
+  lastGood = sample.time;
+  latest = sample;
+  addSample(sample);
+}
+
+function missSample(quality, time = Date.now()) {
+  stale = true;
+  addSample({time, quality, unit:latest?.unit, decimal:latest?.decimal, pv:null, sp:null, mv:null});
+}
+
+function addSample(sample) {
+  history.push(sample);
+  while (history.length && (history[0].time < sample.time - HISTORY_MS || history.length > 3600)) history.shift();
+  if (active && recording) {
+    recording.samples.push(sample);
+    if (recording.samples.length >= RECORD_LIMIT) {
+      stopRecording();
+      text("actionMessage", "Recording limit reached. Export the session before starting another.");
+    }
+  }
+}
+
+const scenarios = {
+  warm:"Watch the process reach then hold the 200 °C target.",
+  overshoot:"A more aggressive simulated PID loop overshoots the setpoint.",
+  stable:"The plant starts at thermal equilibrium.",
+  load:"A simulated load cools the plant after 10 seconds.",
+  alarm:"A simulated high-temperature alarm appears during the first 8 seconds.",
+  drop:"Replies stop from 7 to 12 seconds, then recover automatically."
+};
+
+function resetSim() {
+  if (active) stopRecording();
+  const kind = $("scenario").value;
+  history = [];
+  lastGood = null;
+  latest = null;
+  inspectionTime = null;
+  diagnostics = newDiagnostics();
+  const start = kind === "alarm" ? 218 : ["stable", "load", "drop"].includes(kind) ? 200 : 170;
+  const integral = start >= 200 ? (200 - 25) * .006 / 1.8 * 20 : 0;
+  sim = {kind, t:0, T:start, previous:start, ie:integral, derivative:0, output:start < 200 ? 100 : start === 200 ? 58.3 : 0};
+  text("simMessage", scenarios[kind]);
+  runSim();
+  render();
+}
+
+function stepPlant(s) {
+  // Same heater/loss coefficients and filtered PID structure as the original simulator.
+  const p = s.kind === "overshoot" ? 45 : 20;
+  const i = s.kind === "overshoot" ? 25 : 70;
+  const d = s.kind === "overshoot" ? 0 : 2;
+  for (let step = 0; step < 16; step++) {
+    const dt = .5;
+    const error = 200 - s.T;
+    if (Math.abs(error) < p * 3) s.ie = clamp(s.ie + error * dt / i, 0, p);
+    s.derivative = .8 * s.derivative + .2 * ((s.T - s.previous) / dt);
+    s.output = clamp((100 / p) * (error + s.ie - d * s.derivative), 0, 100);
+    s.previous = s.T;
+    s.T += (1.8 * s.output / 100 - .006 * (s.T - 25)) * dt;
+  }
+}
+
+function runSim() {
+  const s = sim;
+  if (!s) return;
+  const simulatedSeconds = s.t++;
+  if (s.kind === "load" && simulatedSeconds === 10) s.T -= 14;
+  if (simulatedSeconds > 0) stepPlant(s);
+  if (s.kind === "drop" && simulatedSeconds >= 7 && simulatedSeconds < 12) {
+    diagnostics.timeouts++;
+    missSample("Simulated dropout");
+    setState("Simulated communication lost", "danger");
+    return;
+  }
+  diagnostics.reads++;
+  diagnostics.latency = 42;
+  const alarm = s.kind === "alarm" && simulatedSeconds < 8 ? "Simulated high-temperature alarm" : "Normal";
+  acceptSample({time:Date.now(), quality:"Valid", unit:"°C", decimal:1, pv:Math.round(s.T * 10) / 10,
+    sp:200, mv:Math.round(s.output * 10) / 10, alarm, run:"Run"});
+  setState("Simulator · live", "ok");
+}
+
+async function setMode(next) {
+  if (mode === next || changing) return;
+  changing = true;
+  updateControls();
+  if (active) stopRecording();
+  await closeSerial();
+  mode = next;
+  history = [];
+  latest = null;
+  lastGood = null;
+  stale = false;
+  inspectionTime = null;
+  diagnostics = newDiagnostics();
+  if (mode === "sim") resetSim();
+  else {
+    sim = null;
+    setState("Disconnected");
+    text("serialMessage", navigator.serial ? "Choose a USB-to-RS‑485 port. Match the E5CC settings." : "Web Serial unavailable. Open this HTTPS page in desktop Edge or Chrome.");
+  }
+  changing = false;
+  updateControls();
+}
+
+function updateControls() {
+  for (const id of ATTACHED) $(id).disabled = mode !== "live" || changing;
+  $("choose").disabled ||= !!serial;
+  $("serialFields").disabled ||= !!serial;
+  $("connect").disabled ||= !selectedPort;
+  $("readOnce").disabled ||= !selectedPort || !!serial;
+  $("simPanel").hidden = mode !== "sim";
+  $("simMode").setAttribute("aria-pressed", mode === "sim");
+  $("liveMode").setAttribute("aria-pressed", mode === "live");
+  $("simMode").disabled = changing;
+  $("liveMode").disabled = changing;
+  text("connect", serial ? "Disconnect" : "Connect");
+  text("portName", mode === "sim" ? "Live Serial only" : selectedPort ? portDescription(selectedPort) : "No port selected");
+  render();
+}
+
+const tol = () => $("tolerance").validity.valid && valid(number("tolerance")) ? number("tolerance") : null;
+const limit = () => active ? recording.tolerance : tol();
+function display(v, decimals, unit, signedValue = false) {
+  if (!valid(v)) return "—";
+  const rounded = Number(v.toFixed(decimals));
+  const prefix = rounded < 0 ? "−" : rounded > 0 && signedValue ? "+" : "";
+  return prefix + Math.abs(rounded).toFixed(decimals) + (unit === "%" ? "%" : " " + unit);
+}
+
+function updateKpi(valueId, cardId, hint, value, decimals, unit, label = "", outside = false) {
+  text(valueId, display(value, decimals, unit, valueId === "error"));
+  text(hint, stale && valid(value) ? "Stale · last valid" : valid(value) ? label : "Unavailable");
+  $(cardId).classList.toggle("unavailable", stale || !valid(value) || (valueId === "error" && !valid(limit())));
+  $(cardId).classList.toggle("outside", outside);
+}
+
+function render() {
+  const s = latest || {};
+  const unit = s.unit || (mode === "sim" ? "°C" : "—");
+  const dp = s.decimal ?? 1;
+  const error = valid(s.pv) && valid(s.sp) ? s.pv - s.sp : null;
+  const tolerance = limit();
+  const outside = valid(tolerance) && Math.abs(error) > tolerance + 1e-9;
+  updateKpi("pv","pvCard","pvHint",s.pv,dp,unit);
+  updateKpi("sp","spCard","spHint",s.sp,dp,unit,mode === "live" ? "Internal setpoint" : "");
+  updateKpi("error","errCard","errorHint",error,dp,unit,
+    valid(tolerance) ? outside ? "Outside tolerance" : "Within tolerance" : "Set a valid tolerance", outside);
+  updateKpi("mv","mvCard","mvHint",s.mv,1,"%");
+  text("alarm", stale && s.alarm ? s.alarm + " · stale" : s.alarm || "Unavailable");
+  text("run", stale && s.run ? s.run + " · stale" : s.run || "Unavailable");
+  $("alarm").className = stale || !s.alarm ? "" : s.alarm === "Normal" ? "ok" : "danger";
+  $("run").className = stale ? "" : s.run === "Run" ? "ok" : s.run ? "warn" : "";
+  text("lastRead", lastGood === null ? "—" : clock(lastGood));
+  text("connectionStatus", state);
+  $("connectionStatus").className = "pill " + stateTone;
+  text("bandUnit", unit);
+  text("latency", diagnostics.latency === null ? "—" : diagnostics.latency + (mode === "sim" ? " ms (sim)" : " ms"));
+  text("reads", diagnostics.reads);
+  text("timeouts", diagnostics.timeouts);
+  text("crcErrors", diagnostics.crc);
+  text("exceptions", diagnostics.exceptions);
+  text("frames", mode === "sim" ? "Available in Live Serial mode." : "TX  " + diagnostics.tx + "\nRX  " + diagnostics.rx);
+  renderSession();
+  if (!printing) drawCharts(history);
+}
+
+function safeStep(span) {
+  const magnitude = 10 ** Math.floor(Math.log10(span / 4));
+  return ([1,2,2.5,5,10].find(step => step * magnitude >= span / 4) || 10) * magnitude;
+}
+
+function drawCharts(samples, isReport = false) {
+  const width = Math.max(285, Math.round($("temperature").clientWidth || 850));
+  const end = samples.at(-1)?.time ?? Date.now();
+  // Keep a useful window for live readings and the full time domain for a printed test.
+  const start = isReport ? (samples[0]?.time ?? end) : Math.min(end - 30000, samples[0]?.time ?? end);
+  const finish = Math.max(start + 1000, end);
+  const unit = samples.findLast(x => x.unit)?.unit || (mode === "sim" ? "°C" : "EU");
+  const band = isReport ? recording.tolerance : limit();
+  const records = isReport ? recording.notes : recording?.mode === mode ? recording.notes : [];
+  const temps = [];
+  let mvLo = 0, mvHi = 100;
+  for (const sample of samples) {
+    if (valid(sample.pv)) temps.push(sample.pv);
+    if (valid(sample.sp)) temps.push(sample.sp - (band || 0), sample.sp + (band || 0));
+    if (valid(sample.mv)) {
+      mvLo = Math.min(sample.mv, mvLo);
+      mvHi = Math.max(sample.mv, mvHi);
+    }
+  }
+  let lo = temps.length ? temps.reduce((a,b) => Math.min(a,b)) : 0;
+  let hi = temps.length ? temps.reduce((a,b) => Math.max(a,b)) : 100;
+  const padding = Math.max(.1,(hi - lo) * .08);
+  const step = safeStep(Math.max(.5, hi - lo + 2 * padding));
+  lo = Math.floor((lo - padding) / step) * step;
+  hi = Math.ceil((hi + padding) / step) * step;
+  if (hi <= lo) hi = lo + step;
+  const data = {samples,start,finish,width,records,band};
+  plot("temperature", data, width < 480 ? 208 : 233, lo, hi, step, unit, ["sp","pv"], isReport);
+  plot("outputTrend", data, 153, mvLo < 0 ? -25 : 0, mvHi > 100 ? 125 : 100, 25, "%", ["mv"], isReport);
+}
+
+function plot(id, data, height, lo, hi, step, unit, series, report) {
+  const {samples,start,finish,width,records,band} = data;
+  const left = 51, right = width - 16, top = 18, bottom = height - 27;
+  const px = t => left + (t - start) / (finish - start) * (right - left);
+  const py = v => bottom - (v - lo) / (hi - lo) * (bottom - top);
+  const svg = $(id);
+  svg.setAttribute("viewBox", `0 0 ${width} ${height}`);
+  const colors = {pv:"#075985", sp:"#a56500", mv:"#543990"};
+  const group = [];
+  const style = 'fill="#4c5751" font-family="Consolas,monospace" font-size="11"';
+  const line = (x,y,a,b,stroke="#dadbd4",extra="") => `<line x1="${x}" y1="${y}" x2="${a}" y2="${b}" stroke="${stroke}" ${extra}/>`;
+  const words = (x,y,value,anchor="start") => `<text x="${x}" y="${y}" ${style} text-anchor="${anchor}">${value}</text>`;
+  const paths = (key, value) => {
+    const segments = [];
+    let points = [];
+    for (const s of samples) {
+      if (valid(s[key])) points.push([px(s.time),py(value(s))]);
+      else if (points.length) { segments.push(points); points = []; }
+    }
+    if (points.length) segments.push(points);
+    return segments;
+  };
+  if (series.includes("sp") && valid(band)) {
+    const tops = paths("sp",s=>s.sp+band), bottoms = paths("sp",s=>s.sp-band);
+    tops.forEach((points,i) => {
+      if (points.length > 1) group.push(`<polygon points="${[...points,...bottoms[i].slice().reverse()].map(p=>p.map(v=>v.toFixed(2)).join(",")).join(" ")}" fill="#e0e7d7"/>`);
+    });
+  }
+  for (let j = 0; j < 14; j++) {
+    const v = lo + j * step;
+    if (v > hi + step / 100) break;
+    const y = py(v);
+    group.push(line(left,y,right,y),words(left-5,y+4,Number(v.toFixed(3)),"end"));
+  }
+  const ticks = width < 460 ? 3 : 5;
+  for (let i=0;i<=ticks;i++) {
+    const t=start+(finish-start)*i/ticks, x=px(t);
+    group.push(line(x,top,x,bottom),words(x,bottom+16,clock(t),i===ticks?"end":i===0?"start":"middle"));
+  }
+  group.push(line(left,top,left,bottom,"#7b827e"),line(left,bottom,right,bottom,"#7b827e"),words(4,13,unit));
+  for (const key of series) {
+    for (const points of paths(key,s=>s[key])) {
+      if (points.length === 1) group.push(`<circle cx="${points[0][0]}" cy="${points[0][1]}" r="2.5" fill="${colors[key]}"/>`);
+      else {
+        const d = points.map(([x,y],i) => `${i ? "L" : "M"}${x.toFixed(2)} ${y.toFixed(2)}`).join("");
+        group.push(`<path d="${d}" stroke="${colors[key]}" stroke-width="2.5" fill="none" ${key==="sp"?'stroke-dasharray="6 4"':""}/>`);
+      }
+    }
+  }
+  for (const note of records) {
+    if (note.time < start || note.time > finish) continue;
+    const x = px(note.time);
+    group.push(line(x,top,x,bottom,"#746341",'stroke-dasharray="3 4"'),`<circle cx="${x}" cy="${top+4}" r="3" fill="#8b5300"/>`);
+  }
+  if (!report) {
+    const inspected = inspectionTime === null ? samples.at(-1) : nearest(samples, inspectionTime);
+    if (inspected) {
+      const x = px(inspected.time);
+      if (inspectionTime !== null) group.push(line(x,top,x,bottom,"#455551",'stroke-dasharray="3 2"'));
+      for (const key of series) {
+        if (valid(inspected[key])) group.push(`<circle cx="${x}" cy="${py(inspected[key])}" r="3.8" fill="${colors[key]}" stroke="white"/>`);
+      }
+    }
+  }
+  if (!samples.some(s => series.some(key => valid(s[key])))) {
+    group.push(words((left+right)/2,(top+bottom)/2,"Waiting for samples","middle"));
+  }
+  svg.innerHTML = group.join("");
+  charts[id] = {left,right,width,start,finish};
+}
+
+function nearest(samples, time) {
+  return samples.reduce((best, x) => !best || Math.abs(x.time-time)<Math.abs(best.time-time) ? x : best,null);
+}
+
+function showInspection(t) {
+  const s = t === null ? null : nearest(history,t);
+  inspectionTime = s?.time ?? null;
+  text("inspection", s ? `${clock(s.time)}  ·  PV ${display(s.pv,s.decimal,s.unit)}  ·  SP ${display(s.sp,s.decimal,s.unit)}  ·  MV ${display(s.mv,1,"%")}  ·  ${s.quality}` : "Hover or use arrow keys on a chart to inspect a sample.");
+  drawCharts(history);
+}
+
+function startRecording() {
+  if (!valid(tol()) || !$("tolerance").reportValidity()) return;
+  const started = Date.now();
+  recording = {
+    mode, started, testStart:started, ended:null, samples:[], notes:[], tolerance:tol(),
+    cadence:mode === "sim" ? 1000 : serial.settings.interval,
+    equipment:$("equipment").value.trim(), name:$("testName").value.trim(),
+    conditions:$("conditions").value.trim()
+  };
+  $("segment").value = "0";
+  active = true;
+  $("tolerance").disabled = true;
+  text("actionMessage", "Recording started.");
+  render();
+}
+
+function stopRecording() {
+  if (!active) return;
+  active = false;
+  recording.ended = Date.now();
+  $("tolerance").disabled = false;
+  $("noteForm").hidden = true;
+  text("actionMessage", "Recording stopped. Export the CSV or print the summary.");
+}
+
+function addNote(message) {
+  if (!active || !message) return;
+  recording.notes.push({time:Date.now(), message});
+  render();
+}
+
+function constantSegments(samples) {
+  const segments = [];
+  let current;
+  for (const sample of samples) {
+    if (valid(sample.sp) && (!current || sample.sp !== current.sp || sample.unit !== current.unit)) {
+      current = {start:sample.time, sp:sample.sp, unit:sample.unit, samples:[]};
+      segments.push(current);
+    }
+    if (current) current.samples.push(sample);
+  }
+  return segments;
+}
+
+function segmentResult(segment, run, dwellMs, steadyMs) {
+  const tolerance = run.tolerance;
+  const rows = segment.samples;
+  const end = rows.at(-1).time;
+  const windowStart = Math.max(segment.start, end - steadyMs);
+  const approved = sample => sample.quality === "Valid" && valid(sample.pv) && sample.sp === segment.sp;
+  const within = sample => Math.abs(sample.pv - sample.sp) <= tolerance + 1e-9;
+  let elapsed = 0, inBandMs = 0, first = null, settled = null, bandStart = null;
+  let largest = null, sumError = 0, steadyElapsed = 0, lo = Infinity, hi = -Infinity;
+  let mvSum = 0, mvElapsed = 0, validSteadySamples = 0;
+  for (let i = 0; i < rows.length; i++) {
+    const a = rows[i], b = rows[i+1];
+    const good = approved(a);
+    const dt = b ? b.time - a.time : 0;
+    const interval = good && b && approved(b) && dt > 0 && dt <= run.cadence * 2.5;
+    const aIn = good && within(a);
+    if (good) largest = Math.max(largest ?? 0, a.pv - a.sp);
+    if (aIn) {
+      first ??= a.time;
+      bandStart ??= a.time;
+      if (a.time - bandStart >= dwellMs) settled ??= bandStart;
+    }
+    if (!aIn || !interval || !within(b)) bandStart = null;
+    validSteadySamples += Number(good && a.time >= windowStart);
+    if (!interval) continue;
+    elapsed += dt;
+    if (aIn) inBandMs += dt;
+    if (b.time <= windowStart) continue;
+    const overlap = b.time - Math.max(a.time, windowStart);
+    steadyElapsed += overlap;
+    sumError += (a.pv - a.sp) * overlap;
+    lo = Math.min(lo,a.pv,b.pv);
+    hi = Math.max(hi,a.pv,b.pv);
+    if (valid(a.mv) && valid(b.mv)) {
+      mvSum += a.mv * overlap;
+      mvElapsed += overlap;
+    }
+  }
+  return {first,settled,largest,elapsed,inBandMs,
+    coverage:end > segment.start ? elapsed / (end - segment.start) : null,
+    steadyError:steadyElapsed && validSteadySamples >= 2 ? sumError / steadyElapsed : null,
+    steadyRange:steadyElapsed && validSteadySamples >= 2 ? hi - lo : null,
+    averageMv:mvElapsed && validSteadySamples >= 2 ? mvSum / mvElapsed : null};
+}
+
+const metricLabels = ["Time to band","Settling time","Overshoot","Steady-state error","PV variation","Time in tolerance","Average MV","Valid time coverage"];
+for (const name of metricLabels) {
+  const item = document.createElement("div");
+  item.className = "metric";
+  const label = document.createElement("span"), value = document.createElement("b");
+  label.textContent = name;
+  value.textContent = "—";
+  item.append(label,value);
+  $("metrics").append(item);
+}
+
+function renderSession() {
+  $("record").disabled = !active && (!latest || stale || (mode === "live" && !serial));
+  text("record", active ? "Stop recording" : "Start recording");
+  for (const id of ["noteButton","mark"]) $(id).disabled = !active;
+  for (const id of ["export","print"]) $(id).disabled = !recording;
+  let summary = "Ready to record";
+  if (recording) {
+    const elapsed = Math.max(0,Math.floor(((recording.ended ?? Date.now()) - recording.started)/1000));
+    const timer = [Math.floor(elapsed/3600), Math.floor(elapsed/60)%60, elapsed%60].map(n=>String(n).padStart(2,"0")).join(":");
+    summary = `${active ? "● Recording" : "Recorded"} ${timer} · ${recording.mode === "sim" ? "SIMULATED" : "Live RS‑485"} · ${recording.samples.length} samples`;
+  }
+  text("sessionStatus", summary);
+  $("sessionStatus").classList.toggle("recording", active);
+  const notes = recording?.notes ?? [];
+  $("noteDetails").hidden = !notes.length;
+  if ($("notes").dataset.key !== JSON.stringify(notes)) {
+    $("notes").dataset.key = JSON.stringify(notes);
+    $("notes").replaceChildren(...notes.map(n => {
+      const p = document.createElement("p");
+      p.className = "note-line";
+      p.textContent = `${clock(n.time)} · ${n.message}`;
+      return p;
+    }));
+  }
+
+  const segments = recording ? constantSegments(recording.samples.filter(s=>s.time >= recording.testStart)) : [];
+  const select = $("segment"), current = select.value;
+  const options = ["Latest segment",...segments.map(s=>`${clock(s.start)} · SP ${s.sp} ${s.unit}`)];
+  if (select.dataset.key !== JSON.stringify(options)) {
+    select.dataset.key = JSON.stringify(options);
+    select.replaceChildren(...options.map((label,i)=>new Option(label,i)));
+    select.value = select.options[+current] ? current : "0";
+  }
+  const selected = +select.value || segments.length;
+  const segment = segments[selected-1];
+  const dwell = number("dwell"), steady = number("steady");
+  let values = Array(8).fill("—");
+  let context = recording ? "Waiting for sufficient data in a constant-setpoint segment." : "Record a test to calculate results.";
+  if (segment && $("dwell").validity.valid && $("steady").validity.valid && dwell > 0 && steady > 0) {
+    const m = segmentResult(segment,recording,dwell*1000,steady*1000);
+    const origin = selected === 1 ? recording.testStart : segment.start;
+    const delta = t => t === null ? "—" : ((t-origin)/1000).toFixed(1) + " s";
+    const pct = f => valid(f) ? (f*100).toFixed(1) + "%" : "—";
+    values = [
+      delta(m.first),delta(m.settled),display(m.largest,2,segment.unit),
+      display(m.steadyError,2,segment.unit,true),display(m.steadyRange,2,segment.unit),
+      pct(m.elapsed ? m.inBandMs/m.elapsed : null),display(m.averageMv,1,"%"),pct(m.coverage)
+    ];
+    context = `Timing from ${selected === 1 ? "test start" : "segment start"} ${clock(origin)} · ${clock(segment.start)}–${clock(segment.samples.at(-1).time)} · SP ${segment.sp} ${segment.unit} · ±${recording.tolerance} ${segment.unit} · dwell ${dwell} s · steady window ${steady} s. Dashes indicate insufficient data or an event not yet observed.`;
+  }
+  [...$("metrics").children].forEach((item,i)=>{item.lastElementChild.textContent=values[i];});
+  text("metricsContext",context);
+}
+
+function csvField(value) {
+  let str = value == null ? "" : String(value);
+  if (typeof value === "string" && /^[\s]*[=+\-@]/.test(str)) str = "'" + str;
+  return '"' + str.replaceAll('"','""') + '"';
+}
+
+function exportCsv() {
+  const run = recording;
+  if (!run) return;
+  const events = [
+    ...run.samples.map(sample=>({...sample,type:"sample"})),
+    ...run.notes.map(note=>({...note,type:"note"})),
+    {time:run.testStart,type:"test start"}
+  ].sort((a,b)=>a.time-b.time);
+  const rows = [["timestamp_iso","source","equipment_id","test_name","conditions","event","temperature_unit","pv","sp","error_pv_minus_sp","heating_mv_percent","alarm","controller","quality","note","tolerance"]];
+  for (const e of events) rows.push([
+    new Date(e.time).toISOString(),run.mode === "sim"?"SIMULATED":"Live RS-485",
+    run.equipment,run.name,run.conditions,e.type,e.unit,e.pv,e.sp,
+    valid(e.pv)&&valid(e.sp)?Number((e.pv-e.sp).toFixed(e.decimal)):null,
+    e.mv,e.alarm,e.run,e.quality,e.message,run.tolerance
+  ]);
+  const url = URL.createObjectURL(new Blob(["\uFEFF",rows.map(row=>row.map(csvField).join(",")).join("\r\n")],{type:"text/csv;charset=utf-8"}));
+  const anchor = document.createElement("a");
+  anchor.href = url;
+  anchor.download = `E5CC-${run.mode === "sim" ? "SIMULATED-" : ""}${new Date(run.started).toISOString().replace(/[:.]/g,"-")}.csv`;
+  anchor.click();
+  setTimeout(()=>URL.revokeObjectURL(url),1000);
+  text("actionMessage","CSV export prepared.");
+}
+
+$("choose").onclick = choosePort;
+$("connect").onclick = ()=>openSerial(false);
+$("readOnce").onclick = ()=>openSerial(true);
+$("simMode").onclick = ()=>setMode("sim");
+$("liveMode").onclick = ()=>setMode("live");
+$("restart").onclick = resetSim;
+$("scenario").onchange = resetSim;
+$("record").onclick = ()=>{if (active) stopRecording(); else startRecording(); render();};
+$("mark").onclick = ()=>{recording.testStart=Date.now(); $("segment").value="0"; addNote("Test start marked.");};
+$("noteButton").onclick = ()=>{$("noteForm").hidden=false; $("noteText").focus();};
+$("cancelNote").onclick = ()=>{$("noteForm").hidden=true; $("noteButton").focus();};
+$("noteForm").onsubmit = e=>{
+  e.preventDefault();
+  const message = $("noteText").value.trim();
+  if (!message) return;
+  addNote(message);
+  $("noteText").value="";
+  $("noteForm").hidden=true;
+  $("noteButton").focus();
+};
+$("export").onclick = exportCsv;
+$("print").onclick = ()=>window.print();
+for (const id of ["tolerance","dwell","steady","segment"]) $(id).onchange = render;
+for (const id of ["temperature","outputTrend"]) {
+  const chart = $(id);
+  chart.onpointermove = e=>{
+    const {left,right,width,start,finish} = charts[id];
+    const area = chart.getBoundingClientRect();
+    const x = (e.clientX - area.left) * width / area.width;
+    showInspection(start + clamp((x-left)/(right-left),0,1)*(finish-start));
+  };
+  chart.onpointerleave = ()=>showInspection(null);
+  chart.onblur = ()=>showInspection(null);
+  chart.onkeydown = e=>{
+    if (!["ArrowLeft","ArrowRight","Home","End"].includes(e.key) || !history.length) return;
+    e.preventDefault();
+    const current = inspectionTime === null ? history.length - 1 : history.indexOf(nearest(history,inspectionTime));
+    const i = e.key === "Home" ? 0 : e.key === "End" ? history.length - 1 : current+(e.key === "ArrowLeft"?-1:1);
+    showInspection(history[clamp(i,0,history.length-1)].time);
+  };
+}
+
+let printing = false;
+window.addEventListener("beforeprint",()=>{
+  if (!recording) return;
+  printing = true;
+  const run = recording;
+  text("reportTitle",`MAWEA · E5CC Test Report
+${run.mode === "sim" ? "SIMULATED" : "Live RS-485"} · ${run.name || "Temperature test"}
+Equipment ${run.equipment || "—"} · ${new Date(run.started).toLocaleString()}
+Conditions ${run.conditions || "—"}`);
+  drawCharts(run.samples,true);
+});
+window.addEventListener("afterprint",()=>{printing=false; render();});
+window.addEventListener("resize",()=>{if (!printing) drawCharts(history);});
+window.addEventListener("pagehide",()=>{void closeSerial();});
+if (navigator.serial) navigator.serial.addEventListener("disconnect",e=>{
+  if (serial?.port === e.target) void handlePortLost(serial);
+});
+
+resetSim();
+updateControls();
+setInterval(()=>{
+  if (printing) return;
+  if (mode === "sim") runSim();
+  if (mode === "sim" || active) render();
+},1000);
+</script>
+</body>
+</html>
